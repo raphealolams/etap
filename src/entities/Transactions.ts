@@ -6,26 +6,24 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
-  OneToMany,
 } from 'typeorm';
 
 import Users from './Users';
-import Transactions from './Transactions';
+import Wallets from './Wallets';
 import { ColumnNumericTransformer } from './utils';
 
-export enum Status {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
+export enum TransactionStatus {
   PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  SUCCESS = 'SUCCESS',
+  FAILURE = 'FAILURE',
 }
-@Entity({ name: 'wallets' })
-class Wallets {
+
+@Entity({ name: 'transactions' })
+class Transactions {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 3 })
-  currency: string;
-
   @Column({
     type: 'decimal',
     precision: 2,
@@ -33,39 +31,31 @@ class Wallets {
     default: 0.0,
     transformer: new ColumnNumericTransformer(),
   })
-  available_balance: number;
-
-  @Column({
-    type: 'decimal',
-    precision: 2,
-    scale: 2,
-    default: 0.0,
-    transformer: new ColumnNumericTransformer(),
-  })
-  total_balance: number;
+  amount: number;
 
   @Column({
     type: 'enum',
-    enum: Status,
-    default: Status.PENDING,
+    enum: TransactionStatus,
+    default: TransactionStatus.PROCESSING,
   })
-  status: Status;
+  status: TransactionStatus;
 
-  @OneToMany(
-    () => Transactions,
-    (transaction: Transactions) => transaction.user,
-  )
-  transactions: Transactions[];
+  @Column({ length: 266, nullable: false, unique: true })
+  reference: string;
 
   @ManyToOne(() => Users, (user: Users) => user.wallets)
   @JoinColumn({ name: 'user_id' })
   user: Users;
 
+  @ManyToOne(() => Wallets, (wallet: Wallets) => wallet.transactions)
+  @JoinColumn({ name: 'wallet_id' })
+  wallet: Wallets;
+
   @Column({
-    type: 'boolean',
-    default: true,
+    type: 'json',
+    default: {},
   })
-  is_active: boolean;
+  api_log: any;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
@@ -74,4 +64,4 @@ class Wallets {
   modified_at: Date;
 }
 
-export default Wallets;
+export default Transactions;

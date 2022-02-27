@@ -28,3 +28,6 @@ export const transformUserEntityToDto = (data: Users): UserDto => {
 export const comparePassword = (plainPassword, hashPassword): boolean => {
   return bcrypt.compareSync(plainPassword, hashPassword);
 };
+
+export const generateReference = (limit = 10): any =>
+  Number(`${Date.now().toString().slice(0, limit)}`);

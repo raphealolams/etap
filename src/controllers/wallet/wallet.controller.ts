@@ -11,7 +11,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 
 import WalletService from './wallet.service';
-import { CreateWalletDto } from '../../dto/index.dto';
+import { CreateWalletDto, FundWalletDto } from '../../dto/index.dto';
 import {
   CreateWalletStatus,
   UserWallets,
@@ -44,6 +44,21 @@ class WalletController {
     @Param() params: any,
   ): Promise<UserWallet> {
     return await this.walletService.findWallet(params.id, req.user);
+  }
+  @HttpCode(200)
+  @Post('/fund-wallet')
+  @UseGuards(AuthGuard('jwt'))
+  public async fundWallet(
+    @Req() req: any,
+    @Body() fundWalletDto: FundWalletDto,
+  ) {
+    return await this.walletService.fundWallet(fundWalletDto, req.user);
+  }
+
+  @HttpCode(200)
+  @Post('/webhook')
+  public async callBack(@Req() req: any, @Body() body: any) {
+    // return await this.walletService.verifyTransferAndCreditUser(body);
   }
 }
 
