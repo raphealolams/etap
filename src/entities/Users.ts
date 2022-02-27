@@ -8,6 +8,10 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
+export enum Roles {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+}
 @Entity({ name: 'users' })
 class Users {
   @PrimaryGeneratedColumn('uuid')
@@ -30,6 +34,19 @@ class Users {
 
   @Column({ type: 'text' })
   password: string;
+
+  @Column({
+    type: 'enum',
+    enum: Roles,
+    default: Roles.USER,
+  })
+  role: Roles;
+
+  @Column({
+    type: 'boolean',
+    default: true,
+  })
+  is_active: boolean;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import Users from '../../entities/Users';
 
-import { LoginDto, UserDto } from '../../dto/index.dto';
+import { LoginDto, UserDto, RegisterDto } from '../../dto/index.dto';
 import { JwtPayload, LoginStatus } from '../../interfaces/index.interface';
 import { transformUserEntityToDto, comparePassword } from '../../utils/index';
 
@@ -59,6 +59,49 @@ class AuthService {
     };
   }
 
+  async me({ id }: JwtPayload): Promise<UserDto> {
+    const user = await this.userRepository.findOne({
+      where: { id, is_active: true },
+    });
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    return transformUserEntityToDto(user);
+  }
+
+  async registerAndGenerateToken({
+    phone_number,
+    first_name,
+    last_name,
+    email,
+    middle_name,
+    password,
+  }: RegisterDto): Promise<LoginStatus> {
+    const existing = await this.userRepository.findOne({ phone_number });
+
+    if (existing) {
+      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+    }
+
+    const user: Users = await this.userRepository.create({
+      phone_number,
+      first_name,
+      last_name,
+      email,
+      middle_name,
+      password,
+    });
+
+    await this.userRepository.save(user);
+    const token = this.__generateToken(user);
+    return {
+      ...transformUserEntityToDto(user),
+      ...token,
+    };
+  }
+
   async validateUser(payload: JwtPayload): Promise<UserDto> {
     const user = await this.__findById(payload);
     if (!user) {
@@ -68,13 +111,10 @@ class AuthService {
   }
 
   private __generateToken({ id }: UserDto): any {
-    const expiresIn = this.configService.get('JWT_EXPIRES_IN');
-
     const user: JwtPayload = { id };
-    const accessToken = this.jwtService.sign(user);
     return {
-      expiresIn,
-      accessToken,
+      expires_in: this.configService.get('JWT_EXPIRES_IN'),
+      access_token: this.jwtService.sign(user),
     };
   }
 }
