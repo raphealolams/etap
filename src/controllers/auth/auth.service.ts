@@ -23,7 +23,10 @@ class AuthService {
     phone_number,
     password,
   }: LoginDto): Promise<UserDto> {
-    const user = await this.userRepository.findOne({ where: { phone_number } });
+    const user = await this.userRepository.findOne({
+      where: { phone_number },
+      relations: ['wallets'],
+    });
 
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -43,7 +46,10 @@ class AuthService {
   }
 
   private async __findById({ id }: any): Promise<UserDto> {
-    return await this.userRepository.findOne({ where: { id } });
+    return await this.userRepository.findOne({
+      where: { id },
+      relations: ['wallets'],
+    });
   }
 
   async login(payload: LoginDto): Promise<LoginStatus> {
@@ -62,12 +68,12 @@ class AuthService {
   async me({ id }: JwtPayload): Promise<UserDto> {
     const user = await this.userRepository.findOne({
       where: { id, is_active: true },
+      relations: ['wallets'],
     });
 
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-
     return transformUserEntityToDto(user);
   }
 

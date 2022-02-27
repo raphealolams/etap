@@ -2,7 +2,15 @@ import * as bcrypt from 'bcrypt';
 import Users from '../entities/Users';
 import { UserDto } from '../dto/index.dto';
 export const transformUserEntityToDto = (data: Users): UserDto => {
-  const { id, phone_number, email, first_name, middle_name, last_name } = data;
+  const {
+    id,
+    phone_number,
+    email,
+    first_name,
+    middle_name,
+    last_name,
+    wallets,
+  } = data;
 
   const userDto: UserDto = {
     id,
@@ -11,6 +19,7 @@ export const transformUserEntityToDto = (data: Users): UserDto => {
     last_name,
     phone_number,
     email,
+    wallets,
   };
 
   return userDto;

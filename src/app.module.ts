@@ -6,6 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { CoreModule } from './core/core.module';
 
 import { AuthModule } from './controllers/auth/auth.module';
+import { WalletModule } from './controllers/wallet/wallet.module';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 
@@ -26,6 +27,7 @@ import { AppController } from './app.controller';
     DatabaseModule,
     CoreModule,
     AuthModule,
+    WalletModule,
   ],
   controllers: [AppController],
   providers: [AppService],

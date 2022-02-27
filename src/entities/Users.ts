@@ -5,8 +5,11 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
   BeforeInsert,
+  OneToMany,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
+import Wallets from './Wallets';
 
 export enum Roles {
   ADMIN = 'ADMIN',
@@ -33,6 +36,7 @@ class Users {
   email: string;
 
   @Column({ type: 'text' })
+  @Exclude()
   password: string;
 
   @Column({
@@ -53,6 +57,9 @@ class Users {
 
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   modified_at: Date;
+
+  @OneToMany(() => Wallets, (wallet: Wallets) => wallet.user)
+  wallets: Wallets[];
 
   @BeforeInsert() async hashPassword() {
     this.password = await bcrypt.hashSync(this.password, 10);
