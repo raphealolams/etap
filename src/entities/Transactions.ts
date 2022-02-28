@@ -26,9 +26,9 @@ class Transactions {
 
   @Column({
     type: 'decimal',
-    precision: 2,
-    scale: 2,
-    default: 0.0,
+    // precision: 2,
+    // scale: 2,
+    default: 0,
     transformer: new ColumnNumericTransformer(),
   })
   amount: number;

@@ -3,7 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import Users from '../entities/Users';
-import Wallets from 'src/entities/Wallets';
+import Wallets from '../entities/Wallets';
+import Transactions from '../entities/Transactions';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import Wallets from 'src/entities/Wallets';
         username: configService.get('DATABASE_USER'),
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
-        entities: [Users, Wallets],
+        entities: [Users, Wallets, Transactions],
         // synchronize: true,
         // logging: true,
         // logger: 'advanced-console',

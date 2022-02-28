@@ -3,14 +3,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 
-import WalletController from './wallet.controller';
-import WalletService from './wallet.service';
-import Wallets from '../../entities/Wallets';
-import { TransactionModule } from '../transaction/transaction.module';
+import TransactionController from './transaction.controller';
+import TransactionService from './transaction.service';
+import Transactions from '../../entities/Transactions';
 @Module({
   imports: [
-    TransactionModule,
-    TypeOrmModule.forFeature([Wallets]),
+    TypeOrmModule.forFeature([Transactions]),
     ConfigModule,
     HttpModule.registerAsync({
       imports: [ConfigModule],
@@ -20,7 +18,8 @@ import { TransactionModule } from '../transaction/transaction.module';
       }),
     }),
   ],
-  controllers: [WalletController],
-  providers: [WalletService],
+  controllers: [TransactionController],
+  providers: [TransactionService],
+  exports: [TransactionService],
 })
-export class WalletModule {}
+export class TransactionModule {}

@@ -28,18 +28,18 @@ class Wallets {
 
   @Column({
     type: 'decimal',
-    precision: 2,
-    scale: 2,
-    default: 0.0,
+    // precision: 2,
+    // scale: 2,
+    default: 0,
     transformer: new ColumnNumericTransformer(),
   })
   available_balance: number;
 
   @Column({
     type: 'decimal',
-    precision: 2,
-    scale: 2,
-    default: 0.0,
+    // precision: 2,
+    // scale: 2,
+    default: 0,
     transformer: new ColumnNumericTransformer(),
   })
   total_balance: number;
